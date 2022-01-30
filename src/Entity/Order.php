@@ -51,9 +51,29 @@ class Order
      */
     private $orderDetails;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isPaid;
+
+    public $total;
+
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $reference;
+
     public function __construct()
     {
         $this->orderDetails = new ArrayCollection();
+    }
+    public function getTotal(){
+        $total=null;
+
+        foreach ($this->getOrderDetails()->getValues() as $product){
+            $total=$total+($product->getPrice() * $product->getQuantite());
+        }
+        return $total;
     }
 
     public function getId(): ?int
@@ -147,6 +167,30 @@ class Order
                 $orderDetail->setMyOrder(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getIsPaid(): ?bool
+    {
+        return $this->isPaid;
+    }
+
+    public function setIsPaid(bool $isPaid): self
+    {
+        $this->isPaid = $isPaid;
+
+        return $this;
+    }
+
+    public function getReference(): ?string
+    {
+        return $this->reference;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->reference = $reference;
 
         return $this;
     }

@@ -1,7 +1,8 @@
 {
   "name": "ecommerce",
   "version": "1.0.0",
-  "dependencies": {
-    
+  "dependencies": {},
+  "devDependencies": {
+    "@stripe/stripe-js": "^1.22.0"
   }
 }

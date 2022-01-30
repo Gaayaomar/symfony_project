@@ -6,6 +6,7 @@ use App\Entity\Address;
 use App\Entity\Transporteurs;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -31,6 +32,12 @@ class OrderType extends AbstractType
                 'expanded'=>true,
                 'multiple'=>false,
 
+            ])
+            ->add('submit',SubmitType::class,[
+                'label'=>'valider ma commande',
+                'attr'=>[
+                    'class'=>'btn btn-danger btn-block'
+                ]
             ])
         ;
     }

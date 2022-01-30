@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\classe\Search;
 use App\Entity\Article;
+use App\Form\SearchType;
 use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,15 +41,16 @@ class ArticleController extends AbstractController
         }
         return $this->render('article/index.html.twig', [
             'articles' => $articles,
-            'items'=>$panierWithData,
-            'total_panier'=>$total_panier
+            'items' => $panierWithData,
+            'total_panier' => $total_panier
         ]);
     }
+
     #[Route('/all', name: 'articleall')]
-    public function all(Request $request,PaginatorInterface $paginator,SessionInterface $session, ArticleRepository $articleRepository): Response
+    public function all(Request $request, PaginatorInterface $paginator, SessionInterface $session, ArticleRepository $articleRepository): Response
     {
-        $allarticles = $this->getDoctrine()->getRepository(Article::class)->findAll();
-        $articles  = $paginator->paginate($allarticles,  $request->query->getInt('page', 1),20);
+
+
         $panier = $session->get('panier', []);
 
         $panierWithData = [];
@@ -64,17 +67,28 @@ class ArticleController extends AbstractController
 
             $total_panier = $total_panier + $item['quantity'];
         }
+        $search =new Search();
+        $form= $this->createForm(SearchType::class,$search);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() &&$form->isValid()){
+            $allarticles = $this->getDoctrine()->getRepository(Article::class)->findWithSearch($search);
+            $articles = $paginator->paginate($allarticles, $request->query->getInt('page', 1), 5);
+        }
+        $allarticles = $this->getDoctrine()->getRepository(Article::class)->findWithSearch($search);
+        $articles = $paginator->paginate($allarticles, $request->query->getInt('page', 1), 5);
 
         return $this->render('article/lister.html.twig', [
             'articles' => $articles,
-            'items'=>$panierWithData,
-            'total_panier'=>$total_panier
+            'items' => $panierWithData,
+            'total_panier' => $total_panier,
+            'form'=>$form->createView()
 
         ]);
     }
 
     #[Route('/show/{id}', name: 'article_show')]
-    public function show($id,SessionInterface $session, ArticleRepository $articleRepository): Response
+    public function show($id, SessionInterface $session, ArticleRepository $articleRepository): Response
     {
         $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
         $panier = $session->get('panier', []);
@@ -95,69 +109,10 @@ class ArticleController extends AbstractController
         }
         return $this->render('article/show.html.twig', [
             'article' => $article,
-            'items'=>$panierWithData,
-            'total_panier'=>$total_panier
+            'items' => $panierWithData,
+            'total_panier' => $total_panier
         ]);
     }
-
-
-    /**
-     *
-     * @Route("/new/{titre}/{nom}/{price}/{category}",name="new_article")
-     */
-    public function new($titre,$nom,$category,$price)
-    {
-        $article = new Article();
-        $article->setTitle($titre);
-        $article->setImage($nom);
-        $article->setDescription($category);
-        $article->setPrice($price);
-        $article->setDatecreation(new \DateTime());
-        $Manager = $this->getDoctrine()->getManager();
-        $Manager->persist($article);
-        $Manager->flush();
-
-
-        return $this->redirectToRoute('articleall');
-    }
-    /**
-     *
-     * @Route("/edit/{id}/{titre}/{nom}/{category}/{price}", name="article_edit")
-     */
-    public function edit(Request $request,$titre,$nom,$category,$id,$price )
-    {
-
-        $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
-        if ($article){
-            $article->setTitle($titre);
-            $article->setImage($nom);
-            $article->setDescription($category);
-            $article->setPrice($price);
-            $article->setDatecreation(new \DateTime());
-
-            $Manager = $this->getDoctrine()->getManager();
-            $Manager->persist($article);
-            $Manager->flush();
-
-        }
-
-        return $this->redirectToRoute('articleall');}
-
-    /**
-     *
-     * @Route("/delete/{id}", name="article_del")
-     */
-    public function delete(Request $request, $id){
-        $article = $this->getDoctrine()->getRepository(Article::class)->find($id);
-
-        $Manager = $this->getDoctrine()->getManager();
-        $Manager->remove($article);
-        $Manager->flush();
-
-
-
-        return $this->redirectToRoute('articleall');
-    }
-
 }
+
 

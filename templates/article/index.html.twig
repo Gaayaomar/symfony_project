@@ -3,7 +3,27 @@
 {% block title %}index{% endblock %}
 
 {% block body %}
+    <!-- NAVIGATION -->
+    <nav id="navigation">
+        <!-- container -->
+        <div class="container">
+            <!-- responsive-nav -->
+            <div id="responsive-nav">
+                <!-- NAV -->
+                <ul class="main-nav nav navbar-nav">
+                    <li class="active"><a href="/article">Home</a></li>
+                    <li><a href="#hot-deal">Hot Deals</a></li>
+                    <li><a href="#newproduct">new products</a></li>
+                    <li><a href="/article/all">All products</a></li>
 
+                </ul>
+                <!-- /NAV -->
+
+            </div>
+            <!-- /responsive-nav -->
+        </div>
+        <!-- /container -->
+    </nav>
 
     <!-- SECTION -->
     <div class="section">
@@ -30,7 +50,7 @@
                                 <div class="products-slick" data-nav="#slick-nav-1">
                                     <!-- product -->
                                     {% for article in articles  %}
-                                    {% if article.datecreation|date('Y-m-d')>"2021-12-07" %}
+                                    {% if article.datecreation|date('Y-m-d')< "now"|date("Y-m-d")  %}
 
                                         <div class="product">
                                             <div class="product-img">

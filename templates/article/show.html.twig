@@ -19,7 +19,7 @@
                         <li><a href="#">All Categories</a></li>
                         <li><a href="#">{{ article.category }}</a></li>
 
-                        <li class="active">{{ article.title }}</li>
+                        <li class="active">{{ article.slug }}</li>
                     </ul>
                 </div>
             </div>
@@ -79,21 +79,11 @@
 
 
                         <div class="add-to-cart">
-                            <div class="qty-label">
-                                Qty
-                                <div class="input-number">
-                                    <input type="number">
-                                    <span class="qty-up">+</span>
-                                    <span class="qty-down">-</span>
-                                </div>
-                            </div>
+
                             <a href="/panier/add/{{ article.id }}/articleall"><button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> add to cart</button></a>
                         </div>
 
-                        <ul class="product-btns">
-                            <li><a href="#"><i class="fa fa-heart-o"></i> add to wishlist</a></li>
 
-                        </ul>
 
 
                     </div>

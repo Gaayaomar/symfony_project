@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\classe\Search;
 use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
 
 /**
  * @method Article|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,6 +21,23 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+    /**
+     * @return Product[]
+     */
+    public function findWithSearch(Search $search){
+        $query=$this->createQueryBuilder('a')
+            ->select('c','a')
+            ->join('a.category','c');
+        if (!empty($search->categories)){
+            $query=$query->andWhere('c.id IN(:categories)')
+                ->setParameter('categories',$search->categories);
+        }
+        if (!empty($search->string)){
+            $query=$query->andWhere('a.title LIKE :string')
+                ->setParameter('string',"%{$search->string}%");
+        }
+        return $query->getQuery()->getResult();
+    }
     // /**
     //  * @return Article[] Returns an array of Article objects
     //  */

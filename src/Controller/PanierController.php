@@ -4,6 +4,7 @@
 
 namespace App\Controller;
 
+use App\classe\panier;
 use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,19 +15,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class PanierController extends AbstractController
 {
     #[Route('/panier', name: 'panier')]
-    public function index(SessionInterface $session, ArticleRepository $articleRepository): Response
+    public function index(SessionInterface $session, ArticleRepository $articleRepository,panier $panier): Response
     {
-        $panier = $session->get('panier', []);
-
-        $panierWithData = [];
-
-        foreach ($panier as $id => $quantity) {
-            $panierWithData[] = [
-                'article' => $articleRepository->find($id),
-                'quantity' => $quantity
-
-            ];
-        }
+       $panierWithData=$panier->getFull($articleRepository,$session);
         $total = 0;
         foreach ($panierWithData as $item) {
             $totalitem = $item['article']->getPrice() * $item['quantity'];

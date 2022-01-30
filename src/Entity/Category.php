@@ -55,17 +55,13 @@ class Category
         return $this;
     }
 
-
-
-
-    public function __toString(): string
-       {
-           return $this->name;
+    public function __toString() {
+        if(is_null($this->name)) {
+            return 'NULL';
+        }
+        return $this->name;
     }
 
-    /**
-     * @return Collection|Article[]
-     */
     public function getArticles(): Collection
     {
         return $this->articles;
